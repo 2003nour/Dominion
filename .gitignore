@@ -1,0 +1,13 @@
+# Ignorer les fichiers objets
+*.o
+
+# Ignorer les exécutables
+*.exe
+
+# Ignorer d'autres fichiers générés
+*.out
+*.log
+*.tmp
+
+# Ignorer le fichier makefile non standard
+makefile.mak
