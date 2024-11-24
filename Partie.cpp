@@ -145,15 +145,15 @@ void Partie::phaseAction(Joueur& joueur) {
 }
 
 
-
 void Partie::phaseAchat(Joueur& joueur) {
-    joueur.calculerOrEnMain(); // Met à jour l'or disponible
+    joueur.calculerOrEnMain(); // Met à jour l'or disponible avant d'entrer dans la phase d'achat
 
     std::cout << "\nPhase d'Achat pour " << joueur.getNom() << "\n";
 
     while (joueur.getNombreAchats() > 0) { // Boucle tant qu'il y a des achats disponibles
         std::cout << "DEBUG: Nombre d'achats disponibles : " << joueur.getNombreAchats() << "\n";
-        std::cout << "Or disponible dans la main : " << joueur.calculerOrEnMain() << " pièces\n";
+        int argentDisponible = joueur.calculerOrEnMain(); // Recalculer l'or en main
+        std::cout << "Or disponible dans la main : " << argentDisponible << " pièces\n";
 
         std::cout << "Cartes disponibles dans la réserve :\n";
         for (size_t i = 0; i < reserve.size(); ++i) {
@@ -181,8 +181,9 @@ void Partie::phaseAchat(Joueur& joueur) {
         if (choix > 0) {
             auto carte = reserve[choix - 1];
             std::cout << "Avant achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
-            if (joueur.getArgent() >= carte->getCout() && carte->getStock() > 0) {
+            if (argentDisponible >= carte->getCout() && carte->getStock() > 0) {
                 joueur.acheterCarte(*carte);
+                argentDisponible = joueur.calculerOrEnMain(); // Recalculer l'or après achat
                 std::cout << "Après achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
             } else {
                 std::cout << "Pas assez d'or en main ou stock épuisé pour " << carte->getNom() << ".\n";
@@ -195,7 +196,6 @@ void Partie::phaseAchat(Joueur& joueur) {
         joueur.afficherEtat();
     }
 
-    // Afficher un message si le joueur n'a plus d'achats disponibles
     if (joueur.getNombreAchats() == 0) {
         std::cout << joueur.getNom() << " n'a plus d'achats disponibles.\n";
     }

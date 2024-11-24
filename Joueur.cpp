@@ -196,6 +196,7 @@ int Joueur::calculerOrEnMain() const {
     return totalOr;
 }
 
+
 int Joueur::calculerPointsVictoire() const {
     int points = 0;
     for (const auto& carte : deck) {
@@ -218,42 +219,45 @@ void Joueur::jouerAction(int indiceCarte) {
         std::cout << "Action non valide ou pas assez d actions disponibles.\n";
     }
 }
-
 void Joueur::acheterCarte(Cartes& carte) {
     if (nombreAchats > 0) {
-        if (argent >= carte.getCout() && carte.getStock() > 0) {
-            nombreAchats--;
+        int coutRestant = carte.getCout();
 
-            // Réduire l'argent du joueur en fonction du coût de la carte
-            int coutRestant = carte.getCout();
+        if (calculerOrEnMain() >= coutRestant && carte.getStock() > 0) {
+            std::cout << "DEBUG: Tentative d'achat de " << carte.getNom() << " (Coût : " << coutRestant << ")\n";
+
+            // Utiliser les cartes Trésor pour payer
             for (auto it = main.begin(); it != main.end() && coutRestant > 0; ) {
                 if ((*it)->getType() == "Tresor") {
                     if ((*it)->getNom() == "Cuivre") coutRestant -= 1;
                     else if ((*it)->getNom() == "Argent") coutRestant -= 2;
                     else if ((*it)->getNom() == "Or") coutRestant -= 3;
 
-                    defausse.push_back(*it); // Déplace la carte trésor dans la défausse
-                    it = main.erase(it);     // Retire la carte de la main
+                    // Déplacer la carte Trésor utilisée dans la défausse
+                    defausse.push_back(*it);
+                    it = main.erase(it);
                 } else {
                     ++it;
                 }
             }
 
             if (coutRestant <= 0) {
-                // Ajouter la carte achetée dans la défausse
+                // Ajouter la carte achetée à la défausse
                 defausse.push_back(std::make_shared<Cartes>(carte));
                 carte.setStock(carte.getStock() - 1); // Réduire le stock de la carte
-                std::cout << nom << " a acheté " << carte.getNom() << " et l a placée dans sa défausse.\n";
+                nombreAchats--; // Réduire le nombre d'achats disponibles
+                std::cout << "DEBUG: Achat réussi. " << carte.getNom() << " a été ajouté à la défausse.\n";
             } else {
-                std::cout << "Erreur : Pas assez de tresors pour acheter " << carte.getNom() << ".\n";
+                std::cout << "Erreur : Pas assez de Trésors pour acheter " << carte.getNom() << ".\n";
             }
         } else {
-            std::cout << "Erreur : Pas assez d'or ou carte en rupture de stock.\n";
+            std::cout << "Erreur : Pas assez d'or ou stock épuisé pour " << carte.getNom() << ".\n";
         }
     } else {
-        std::cout << "Erreur : Pas d achats disponibles pour ce tour.\n";
+        std::cout << "Erreur : Aucun achat disponible.\n";
     }
 }
+
 void Joueur::afficherEtat() const {
     std::cout << "\n--- Etat du joueur " << nom << " ---\n";
 
