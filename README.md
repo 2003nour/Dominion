@@ -1,2 +1,2 @@
 # Dominion
-Une version C++ du Dominion
+soyez indulgent svp

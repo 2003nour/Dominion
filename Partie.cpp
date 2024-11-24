@@ -146,51 +146,61 @@ void Partie::phaseAction(Joueur& joueur) {
 
 
 
-
 void Partie::phaseAchat(Joueur& joueur) {
     joueur.calculerOrEnMain(); // Met à jour l'or disponible
 
     std::cout << "\nPhase d'Achat pour " << joueur.getNom() << "\n";
-    std::cout << "Or disponible dans la main : " << joueur.calculerOrEnMain() << " pièces\n";
 
-    std::cout << "Cartes disponibles dans la réserve :\n";
-    for (size_t i = 0; i < reserve.size(); ++i) {
-        auto carte = reserve[i];
-        std::cout << i + 1 << " - " << carte->getNom() << " (Coût : " << carte->getCout()
-                << ", Stock : " << carte->getStock() << ")\n";
-    }
+    while (joueur.getNombreAchats() > 0) { // Boucle tant qu'il y a des achats disponibles
+        std::cout << "DEBUG: Nombre d'achats disponibles : " << joueur.getNombreAchats() << "\n";
+        std::cout << "Or disponible dans la main : " << joueur.calculerOrEnMain() << " pièces\n";
 
-    int choix;
-    while (true) {
-        std::cout << "Choisissez une carte à acheter (0 pour passer) : ";
-        std::cin >> choix;
-
-        if (std::cin.fail()) {
-            std::cin.clear(); // Réinitialise le flux en cas d'erreur
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Vide le flux
-            std::cout << "Entrée invalide. Veuillez entrer un nombre entier.\n";
-        } else if (choix >= 0 && static_cast<size_t>(choix) <= reserve.size()) {
-            break; // Entrée valide
-        } else {
-            std::cout << "Choix hors des limites. Veuillez réessayer.\n";
+        std::cout << "Cartes disponibles dans la réserve :\n";
+        for (size_t i = 0; i < reserve.size(); ++i) {
+            auto carte = reserve[i];
+            std::cout << i + 1 << " - " << carte->getNom() << " (Coût : " << carte->getCout()
+                      << ", Stock : " << carte->getStock() << ")\n";
         }
+
+        int choix;
+        while (true) {
+            std::cout << "Choisissez une carte à acheter (0 pour passer) : ";
+            std::cin >> choix;
+
+            if (std::cin.fail()) {
+                std::cin.clear(); // Réinitialise le flux en cas d'erreur
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Vide le flux
+                std::cout << "Entrée invalide. Veuillez entrer un nombre entier.\n";
+            } else if (choix >= 0 && static_cast<size_t>(choix) <= reserve.size()) {
+                break; // Entrée valide
+            } else {
+                std::cout << "Choix hors des limites. Veuillez réessayer.\n";
+            }
+        }
+
+        if (choix > 0) {
+            auto carte = reserve[choix - 1];
+            std::cout << "Avant achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
+            if (joueur.getArgent() >= carte->getCout() && carte->getStock() > 0) {
+                joueur.acheterCarte(*carte);
+                std::cout << "Après achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
+            } else {
+                std::cout << "Pas assez d'or en main ou stock épuisé pour " << carte->getNom() << ".\n";
+            }
+        } else {
+            std::cout << "Aucun achat effectué.\n";
+            break; // Si le joueur choisit de passer, sortir de la boucle d'achat
+        }
+
+        joueur.afficherEtat();
     }
 
-    if (choix > 0) {
-        auto carte = reserve[choix - 1];
-        std::cout << "Avant achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
-        if (joueur.getArgent() >= carte->getCout() && carte->getStock() > 0) {
-            joueur.acheterCarte(*carte);
-            
-            std::cout << "Après achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
-        } else {
-            std::cout << "Pas assez d'or en main ou stock épuisé pour " << carte->getNom() << ".\n";
-        }
-    } else {
-        std::cout << "Aucun achat effectué.\n";
+    // Afficher un message si le joueur n'a plus d'achats disponibles
+    if (joueur.getNombreAchats() == 0) {
+        std::cout << joueur.getNom() << " n'a plus d'achats disponibles.\n";
     }
-    joueur.afficherEtat();
 }
+
 
 void Partie::phaseAjustement(Joueur& joueur) {
     std::cout << "\nPhase d'Ajustement pour " << joueur.getNom() << "\n";

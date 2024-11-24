@@ -3,6 +3,9 @@
 #include "Joueur.h"
 #include "Partie.h"
 #include "Cartes.hpp"
+
+
+
 #include <iostream>   
 #include <set>
 #include <algorithm> // Nécessaire pour std::find_if
@@ -95,17 +98,27 @@ void Royaume::Atelier(Joueur& joueur) {
 
 // Bucheron testé
 void Royaume::Bucheron(Joueur& joueur) {
-    
-        std::cout << "Effet Bûcheron en cours...\n";
-        for (int i = 0; i < 2; ++i) {
-            auto carteArgent = std::make_shared<Cartes>("Cuivre");
-            joueur.getDefausse().push_back(carteArgent);
-        }
-        joueur.setNombreAchats(joueur.getNombreAchats() + 1);
-        std::cout << joueur.getNom() << " gagne 2 pièces et un achat supplémentaire.\n";
-        
-    
+    std::cout << "Effet Bûcheron en cours...\n";
+
+    // Débogage : Nombre d'achats avant l'effet
+    std::cout << "DEBUG: Nombre d'achats avant : " << joueur.getNombreAchats() << "\n";
+
+    // Ajout des cartes Cuivre à la défausse
+    for (int i = 0; i < 2; ++i) {
+        auto carteArgent = std::make_shared<Cartes>("Cuivre");
+        joueur.getDefausse().push_back(carteArgent);
+    }
+
+    // Augmenter le nombre d'achats
+    joueur.setNombreAchats(joueur.getNombreAchats() + 1);
+
+    // Débogage : Nombre d'achats après l'effet
+    std::cout << "DEBUG: Nombre d'achats après : " << joueur.getNombreAchats() << "\n";
+
+    // Afficher le résultat de l'effet
+    std::cout << joueur.getNom() << " gagne 2 pièces et un achat supplémentaire.\n";
 }
+
 
 
 
