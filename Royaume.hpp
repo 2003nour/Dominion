@@ -21,7 +21,7 @@ public:
     ~Royaume();
 
     // Effets des cartes Royaume
-    void Atelier(Joueur& joueur);
+    void Atelier(Joueur& joueur, Partie& partie);
     void Bucheron(Joueur& joueur);
     void Chapelle(Joueur& joueur);
     void Laboratoire(Joueur& joueur);

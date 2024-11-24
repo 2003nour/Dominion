@@ -56,30 +56,34 @@ Royaume::Royaume(const std::string& nom) : Cartes(nom) {
 Royaume::~Royaume() {}
 
 // Atelier testé
-void Royaume::Atelier(Joueur& joueur) {
+void Royaume::Atelier(Joueur& joueur, Partie& partie) {
     std::cout << "Quelle carte souhaitez-vous ajouter à votre deck (coût <= 4) ?\n";
 
-    // Filtrer les cartes valides
+    // Filtrer les cartes valides (coût <= 4 et en stock), tout en évitant les doublons
     std::vector<std::shared_ptr<Cartes>> cartesDisponibles;
-    for (const auto& carte : Cartes::toutesLesCartes) {
-        if (carte->getCout() <= 4 && carte->getStock() > 0) {
+    std::set<std::string> nomsCartesAjoutes; // Pour éviter les doublons
+
+    for (const auto& carte : partie.reserve) { // Utiliser les cartes directement depuis la réserve
+        if (carte->getCout() <= 4 && carte->getStock() > 0 && nomsCartesAjoutes.find(carte->getNom()) == nomsCartesAjoutes.end()) {
             cartesDisponibles.push_back(carte);
+            nomsCartesAjoutes.insert(carte->getNom());
         }
     }
 
     // Vérifiez qu'il y a au moins une carte disponible
     if (cartesDisponibles.empty()) {
-        std::cout << "Aucune carte disponible à ajouter (coût <= 4).\n";
+        std::cout << "Aucune carte disponible avec un coût <= 4.\n";
         return;
     }
 
     // Afficher les cartes valides
     for (size_t i = 0; i < cartesDisponibles.size(); ++i) {
         std::cout << i + 1 << " - " << cartesDisponibles[i]->getNom()
-                << " (Coût : " << cartesDisponibles[i]->getCout()
-                << ", Stock : " << cartesDisponibles[i]->getStock() << ")\n";
+                  << " (Coût : " << cartesDisponibles[i]->getCout()
+                  << ", Stock : " << cartesDisponibles[i]->getStock() << ")\n";
     }
 
+    // Choix du joueur
     int choix;
     std::cout << "Votre choix : ";
     std::cin >> choix;
@@ -87,13 +91,24 @@ void Royaume::Atelier(Joueur& joueur) {
     // Vérification du choix
     if (choix > 0 && static_cast<size_t>(choix) <= cartesDisponibles.size()) {
         auto carteChoisie = cartesDisponibles[choix - 1];
+
+        // DEBUG : Afficher le stock avant décrémentation
+        std::cout << "DEBUG: Stock avant décrémentation pour " << carteChoisie->getNom()
+                  << ": " << carteChoisie->getStock() << "\n";
+
         carteChoisie->setStock(carteChoisie->getStock() - 1);
+
+        // DEBUG : Afficher le stock après décrémentation
+        std::cout << "DEBUG: Stock après décrémentation pour " << carteChoisie->getNom()
+                  << ": " << carteChoisie->getStock() << "\n";
+
         joueur.getDefausse().push_back(carteChoisie);
         std::cout << "La carte " << carteChoisie->getNom() << " a été ajoutée à votre défausse.\n";
     } else {
-        std::cout << "Choix invalide.\n";
+        std::cout << "Choix invalide. Aucune carte ajoutée.\n";
     }
 }
+
 
 
 // Bucheron testé
@@ -319,7 +334,7 @@ void Royaume::appliquerEffet(Joueur& joueur, Partie& partie) {
     } else if (this->nom == "Sorciere") {
         Sorciere(joueur, partie);
     } else if (this->nom == "Atelier") {
-        Atelier(joueur);
+        Atelier(joueur,partie);
     } else if (this->nom == "Voleur") {
         Voleur(joueur, partie);
     } else if (this->nom == "Bucheron") {

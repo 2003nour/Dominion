@@ -70,7 +70,10 @@ void Partie::phaseAction(Joueur& joueur) {
         int choix;
         std::cout << "Choisissez une carte Action à jouer (0 pour passer) : ";
         std::cin >> choix;
-
+        if (choix== -1) {
+            activerModeFinDePartie();
+            return; // Terminez immédiatement cette phase
+        }
         if (choix == 0) {
             // Le joueur décide de ne pas jouer d'autres actions
             break;
@@ -103,7 +106,7 @@ void Partie::phaseAction(Joueur& joueur) {
                     }
                 } else if (carteChoisie->getNom() == "Atelier") {
                     std::cout << "Effet : Atelier\n";
-                    Royaume("Atelier").Atelier(joueur);
+                    Royaume("Atelier").Atelier(joueur,*this);
                 } else if (carteChoisie->getNom() == "Voleur") {
                     std::cout << "Effet : Voleur\n";
                     Royaume("Voleur").Voleur(joueur, *this);
@@ -159,7 +162,7 @@ void Partie::phaseAchat(Joueur& joueur) {
         for (size_t i = 0; i < reserve.size(); ++i) {
             auto carte = reserve[i];
             std::cout << i + 1 << " - " << carte->getNom() << " (Coût : " << carte->getCout()
-                      << ", Stock : " << carte->getStock() << ")\n";
+                    << ", Stock : " << carte->getStock() << ")\n";
         }
 
         int choix;
@@ -177,7 +180,11 @@ void Partie::phaseAchat(Joueur& joueur) {
                 std::cout << "Choix hors des limites. Veuillez réessayer.\n";
             }
         }
-
+        if (choix==-1){
+            activerModeFinDePartie();
+            return; // Quittez immédiatement la phase
+        }
+        
         if (choix > 0) {
             auto carte = reserve[choix - 1];
             std::cout << "Avant achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
