@@ -121,7 +121,7 @@ void Royaume::Chapelle(Joueur& joueur) {
         std::cout << "Main actuelle :\n";
         for (size_t i = 0; i < joueur.getMain().size(); ++i) {
             std::cout << i + 1 << " - " << joueur.getMain()[i]->getNom() 
-                      << " (" << joueur.getMain()[i]->getDescription() << ")\n";
+                    << " (" << joueur.getMain()[i]->getDescription() << ")\n";
         }
         std::cout << "Choisissez une carte à supprimer (0 pour terminer) : ";
         std::cin >> choix;
@@ -140,7 +140,7 @@ void Royaume::Chapelle(Joueur& joueur) {
 
             // Affichage pour le joueur
             std::cout << "La carte " << carteSupprimee->getNom() 
-                      << " a été retirée définitivement du jeu.\n";
+                    << " a été retirée définitivement du jeu.\n";
 
         } else {
             std::cout << "Choix invalide. Veuillez réessayer.\n";
@@ -148,7 +148,7 @@ void Royaume::Chapelle(Joueur& joueur) {
     }
 
     std::cout << "Vous avez supprimé " << cartesADefauser 
-              << " carte(s) de votre main.\n";
+            << " carte(s) de votre main.\n";
 }
 
 
@@ -224,14 +224,13 @@ void Royaume::Jardins(Joueur& joueur,Partie& partie) {
     }
 }
 
-// Laboratoire à tester
+// Laboratoire testé
 void Royaume::Laboratoire(Joueur& joueur) {
-    if (this->nom == "Laboratoire") {
         joueur.piocher(2);
         joueur.setNombreActions(joueur.getNombreActions() + 1);
         std::cout << joueur.getNom() << " pioche 2 cartes et gagne une action supplémentaire.\n";
     }
-}
+
 
 // testés
 void Royaume::Village(Joueur& joueur) {
