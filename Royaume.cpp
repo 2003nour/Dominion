@@ -301,28 +301,55 @@ void Royaume::Sorciere(Joueur& joueur, Partie& partie) {
 
 //  testé
 void Royaume::Voleur(Joueur& joueur, Partie& partie) {
-    
-        for (Joueur& autreJoueur : partie.getJoueurs()) { // Référence non-constante pour permettre modification
-            if (!autreJoueur.possedeCarte("Douve")) {
-                for (int i = 0; i < 2; ++i) {
-                    // La méthode piocher retourne un std::shared_ptr<Cartes>
-                    std::shared_ptr<Cartes> carte = autreJoueur.piocher(1);
-                    
-                    if (carte->getType() == "Tresor") { // Utilisation de -> au lieu de .
-                        std::cout << "Souhaitez-vous voler " << carte->getNom() << " ? (oui/non): "; // Utilisation de ->
-                        std::string reponse;
-                        std::cin >> reponse;
-                        if (reponse == "oui") {
-                            joueur.getDefausse().push_back(carte);
-                            break;
-                        }
+    for (Joueur& autreJoueur : partie.getJoueurs()) { // Référence non-constante pour permettre modification
+        if (&autreJoueur != &joueur && !autreJoueur.possedeCarte("Douve")) { // Ne pas cibler le joueur lui-même
+            std::cout << autreJoueur.getNom() << " n'a pas de Douve. Les deux premières cartes de son deck seront révélées.\n";
+
+            // Vérifier que le deck contient au moins deux cartes
+            auto& deck = autreJoueur.getDeck();
+            size_t cartesARemontrer = std::min(deck.size(), static_cast<size_t>(2));
+
+            if (cartesARemontrer == 0) {
+                std::cout << autreJoueur.getNom() << " n'a pas assez de cartes dans son deck.\n";
+                continue; // Passer au prochain joueur
+            }
+
+            for (size_t i = 0; i < cartesARemontrer; ++i) {
+                auto carte = deck[i]; // Récupérer la carte
+                std::cout << autreJoueur.getNom() << " révèle : " << carte->getNom() 
+                          << " (" << carte->getType() << ")\n";
+
+                // Vérifier si la carte est un Trésor
+                if (carte->getType() == "Tresor") {
+                    std::cout << "Souhaitez-vous voler " << carte->getNom() << " ? (oui/non): ";
+                    std::string reponse;
+                    std::cin >> reponse;
+
+                    if (reponse == "oui") {
+                        // Déplacer la carte dans la défausse du joueur
+                        joueur.getDefausse().push_back(carte);
+
+                        // Supprimer la carte du deck de l'autre joueur
+                        deck.erase(deck.begin() + i);
+                        std::cout << "Vous avez volé " << carte->getNom() << ". Elle a été ajoutée à votre défausse.\n";
+
+                        // Réduire l'indice pour tenir compte du décalage dans le deck après l'effacement
+                        --cartesARemontrer;
+                        --i;
+                    } else {
+                        std::cout << "Vous avez choisi de ne pas voler " << carte->getNom() << ".\n";
                     }
                 }
             }
+        } else {
+            std::cout << autreJoueur.getNom() << " est protégé par une Douve.\n";
         }
-        partie.jeterCarte(std::make_shared<Royaume>("Voleur"));
-    
-} 
+    }
+
+    // Jeter la carte Voleur après son utilisation
+    partie.jeterCarte(std::make_shared<Royaume>("Voleur"));
+}
+
 void Royaume::appliquerEffet(Joueur& joueur, Partie& partie) {
     std::cout << "Application de l'effet pour la carte : " << this->nom << "\n";
     if (this->nom == "Village") {

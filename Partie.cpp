@@ -110,6 +110,7 @@ void Partie::phaseAction(Joueur& joueur) {
                 } else if (carteChoisie->getNom() == "Voleur") {
                     std::cout << "Effet : Voleur\n";
                     Royaume("Voleur").Voleur(joueur, *this);
+                    joueur.supprimerCarte(carteChoisie);
                 } else if (carteChoisie->getNom() == "Bucheron") {
                     std::cout << "Effet : Bucheron\n";
                     Royaume("Bucheron").Bucheron(joueur);
@@ -119,6 +120,7 @@ void Partie::phaseAction(Joueur& joueur) {
                 } else if (carteChoisie->getNom() == "Festin") {
                     std::cout << "Effet : Festin\n";
                     Royaume("Festin").Festin(joueur, *this);
+                    joueur.supprimerCarte(carteChoisie);
                 } else if (carteChoisie->getNom() == "Jardins") {
                     std::cout << "Effet : Jardins\n";
                     Royaume("Jardins").Jardins(joueur, *this);
@@ -127,12 +129,13 @@ void Partie::phaseAction(Joueur& joueur) {
                 }
 
                 // Déplacer la carte dans la défausse après utilisation
+                if (carteChoisie->getNom() != "Voleur" && carteChoisie->getNom() != "Festin") {
+                
                 joueur.getDefausse().push_back(carteChoisie);
-                Mano.erase(Mano.begin() + choix - 1);
+                Mano.erase(Mano.begin() + choix - 1);}
 
                 // Décrémenter le nombre d'actions
                 joueur.setNombreActions(joueur.getNombreActions() - 1);
-                std::cout << "DEBUG: Nombre d'actions restantes après utilisation : " << joueur.getNombreActions() << "\n";
             } else {
                 std::cout << "Erreur : La carte choisie n'est pas une carte Action.\n";
             }
@@ -154,14 +157,14 @@ void Partie::phaseAchat(Joueur& joueur) {
     std::cout << "\nPhase d'Achat pour " << joueur.getNom() << "\n";
 
     while (joueur.getNombreAchats() > 0) { // Boucle tant qu'il y a des achats disponibles
-        std::cout << "DEBUG: Nombre d'achats disponibles : " << joueur.getNombreAchats() << "\n";
+
         int argentDisponible = joueur.calculerOrEnMain(); // Recalculer l'or en main
         std::cout << "Or disponible dans la main : " << argentDisponible << " pièces\n";
 
         std::cout << "Cartes disponibles dans la réserve :\n";
         for (size_t i = 0; i < reserve.size(); ++i) {
             auto carte = reserve[i];
-            std::cout << i + 1 << " - " << carte->getNom() << " (Coût : " << carte->getCout()
+            std::cout << i + 1 << " - " << carte->getNom() << " (Cout : " << carte->getCout()
                     << ", Stock : " << carte->getStock() << ")\n";
         }
 
@@ -347,12 +350,6 @@ std::vector<Joueur>& Partie::getJoueurs() {
     return joueurs;
 }
 void Partie::afficherEtat() const {
-    std::cout << "\nEtat actuel du jeu :\n";
-    for (const auto& joueur : joueurs) {
-        std::cout << "- " << joueur.getNom() << " a " << joueur.getPointsVictoire() << " points de victoire et " 
-                << joueur.getArgent() << " pieces d'or.\n";
-    }
-
     std::cout << "\nCartes dans la reserve :\n";
     for (const auto& carte : reserve) {
         std::cout << "- " << carte->getNom() << " (Stock : " << carte->getStock() << ", Cout : " << carte->getCout() << ")\n";

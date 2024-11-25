@@ -67,10 +67,8 @@ Joueur::Joueur(const std::string& nom)
     setPointsVictoire(totalPointsVictoire);
     setArgent(totalArgent);
 
-    // Afficher les points de victoire et l'argent
-    std::cout << nom << " commence avec :\n";
-    std::cout << "- " << pointsVictoire << " points de victoire\n";
-    std::cout << "- " << argent << " pieces d'or\n";
+    
+
 }
 
 
@@ -370,11 +368,6 @@ void Joueur::melangerDeck() {
 
     std::mt19937 g(static_cast<unsigned int>(std::time(0)));
     std::shuffle(deck.begin(), deck.end(), g);
-
-    std::cout << "Deck après mélange :\n";
-    for (const auto& carte : deck) {
-        std::cout << "- " << carte->getNom() << " (" << carte->getType() << ")\n";
-    }
 } 
 void Joueur::supprimerCarte(const std::shared_ptr<Cartes>& carte) {
     // Supprimer de la main
