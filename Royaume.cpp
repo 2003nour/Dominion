@@ -79,8 +79,8 @@ void Royaume::Atelier(Joueur& joueur, Partie& partie) {
     // Afficher les cartes valides
     for (size_t i = 0; i < cartesDisponibles.size(); ++i) {
         std::cout << i + 1 << " - " << cartesDisponibles[i]->getNom()
-                  << " (Coût : " << cartesDisponibles[i]->getCout()
-                  << ", Stock : " << cartesDisponibles[i]->getStock() << ")\n";
+                << " (Coût : " << cartesDisponibles[i]->getCout()
+                << ", Stock : " << cartesDisponibles[i]->getStock() << ")\n";
     }
 
     // Choix du joueur
@@ -94,13 +94,13 @@ void Royaume::Atelier(Joueur& joueur, Partie& partie) {
 
         // DEBUG : Afficher le stock avant décrémentation
         std::cout << "DEBUG: Stock avant décrémentation pour " << carteChoisie->getNom()
-                  << ": " << carteChoisie->getStock() << "\n";
+                << ": " << carteChoisie->getStock() << "\n";
 
         carteChoisie->setStock(carteChoisie->getStock() - 1);
 
         // DEBUG : Afficher le stock après décrémentation
         std::cout << "DEBUG: Stock après décrémentation pour " << carteChoisie->getNom()
-                  << ": " << carteChoisie->getStock() << "\n";
+                << ": " << carteChoisie->getStock() << "\n";
 
         joueur.getDefausse().push_back(carteChoisie);
         std::cout << "La carte " << carteChoisie->getNom() << " a été ajoutée à votre défausse.\n";
@@ -118,10 +118,10 @@ void Royaume::Bucheron(Joueur& joueur) {
     // Débogage : Nombre d'achats avant l'effet
     std::cout << "DEBUG: Nombre d'achats avant : " << joueur.getNombreAchats() << "\n";
 
-    // Ajout des cartes Cuivre à la défausse
+    // Ajouter 2 cartes Cuivre directement dans la main
     for (int i = 0; i < 2; ++i) {
-        auto carteArgent = std::make_shared<Cartes>("Cuivre");
-        joueur.getDefausse().push_back(carteArgent);
+        auto carteCuivre = std::make_shared<Cartes>("Cuivre");
+        joueur.getMain().push_back(carteCuivre); // Ajoute les cuivres à la main
     }
 
     // Augmenter le nombre d'achats
@@ -131,7 +131,13 @@ void Royaume::Bucheron(Joueur& joueur) {
     std::cout << "DEBUG: Nombre d'achats après : " << joueur.getNombreAchats() << "\n";
 
     // Afficher le résultat de l'effet
-    std::cout << joueur.getNom() << " gagne 2 pièces et un achat supplémentaire.\n";
+    std::cout << joueur.getNom() << " gagne 2 pièces (Cuivres ajoutés à la main) et un achat supplémentaire.\n";
+
+    // Afficher la main du joueur après l'effet
+    std::cout << "Main actuelle de " << joueur.getNom() << " :\n";
+    for (const auto& carte : joueur.getMain()) {
+        std::cout << "- " << carte->getNom() << " (" << carte->getType() << ")\n";
+    }
 }
 
 
@@ -212,8 +218,8 @@ void Royaume::Festin(Joueur& joueur, Partie& partie) {
     // Afficher les cartes valides
     for (size_t i = 0; i < cartesDisponibles.size(); ++i) {
         std::cout << i + 1 << " - " << cartesDisponibles[i]->getNom()
-                  << " (Coût : " << cartesDisponibles[i]->getCout()
-                  << ", Stock : " << cartesDisponibles[i]->getStock() << ")\n";
+                << " (Coût : " << cartesDisponibles[i]->getCout()
+                << ", Stock : " << cartesDisponibles[i]->getStock() << ")\n";
     }
 
     // Choix du joueur
@@ -226,7 +232,7 @@ void Royaume::Festin(Joueur& joueur, Partie& partie) {
 
         // DEBUG : Afficher le stock avant décrémentation
         std::cout << "DEBUG: Stock avant décrémentation pour " << carteChoisie->getNom()
-                  << ": " << carteChoisie->getStock() << "\n";
+                << ": " << carteChoisie->getStock() << "\n";
 
         carteChoisie->setStock(carteChoisie->getStock() - 1);
 
@@ -317,7 +323,7 @@ void Royaume::Voleur(Joueur& joueur, Partie& partie) {
             for (size_t i = 0; i < cartesARemontrer; ++i) {
                 auto carte = deck[i]; // Récupérer la carte
                 std::cout << autreJoueur.getNom() << " révèle : " << carte->getNom() 
-                          << " (" << carte->getType() << ")\n";
+                        << " (" << carte->getType() << ")\n";
 
                 // Vérifier si la carte est un Trésor
                 if (carte->getType() == "Tresor") {
@@ -331,7 +337,7 @@ void Royaume::Voleur(Joueur& joueur, Partie& partie) {
 
                         // Supprimer la carte du deck de l'autre joueur
                         deck.erase(deck.begin() + i);
-                        std::cout << "Vous avez volé " << carte->getNom() << ". Elle a été ajoutée à votre défausse.\n";
+                        std::cout << "Vous avez vole " << carte->getNom() << ". Elle a ete ajoutee à votre defausse.\n";
 
                         // Réduire l'indice pour tenir compte du décalage dans le deck après l'effacement
                         --cartesARemontrer;
@@ -342,37 +348,10 @@ void Royaume::Voleur(Joueur& joueur, Partie& partie) {
                 }
             }
         } else {
-            std::cout << autreJoueur.getNom() << " est protégé par une Douve.\n";
+            std::cout << autreJoueur.getNom() << " est protege par une Douve.\n";
         }
     }
 
     // Jeter la carte Voleur après son utilisation
     partie.jeterCarte(std::make_shared<Royaume>("Voleur"));
-}
-
-void Royaume::appliquerEffet(Joueur& joueur, Partie& partie) {
-    std::cout << "Application de l'effet pour la carte : " << this->nom << "\n";
-    if (this->nom == "Village") {
-        Village(joueur);
-    } else if (this->nom == "Laboratoire") {
-        Laboratoire(joueur);
-    } else if (this->nom == "Chapelle") {
-        Chapelle(joueur);
-    } else if (this->nom == "Sorciere") {
-        Sorciere(joueur, partie);
-    } else if (this->nom == "Atelier") {
-        Atelier(joueur,partie);
-    } else if (this->nom == "Voleur") {
-        Voleur(joueur, partie);
-    } else if (this->nom == "Bucheron") {
-        Bucheron(joueur);
-    } else if (this->nom == "Douve") {
-        Douve(joueur);
-    } else if (this->nom == "Festin") {
-        Festin(joueur,partie);
-    } else if (this->nom == "Jardins") {
-        Jardins(joueur,partie);
-    } else {
-        std::cout << "Effet non défini pour la carte : " << this->nom << "\n";
-    }
 }

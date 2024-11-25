@@ -19,6 +19,8 @@ void Partie::demarrer() {
         jouerTour();
         joueurActuel = (joueurActuel + 1) % joueurs.size();
     }
+    for (const auto& joueur : joueurs) {
+        joueur.afficherEtat();}
     annoncerVainqueur();
 }
 
@@ -316,7 +318,7 @@ void Partie::activerModeFinDePartie() {
             auto carteOr = std::make_shared<Cartes>("Or");
             joueur.getMain().push_back(carteOr);
         }
-        joueur.setArgent(5 * 6); // Mettre à jour l'argent directement
+ // Mettre à jour l'argent directement
         std::cout << "La main de " << joueur.getNom() << " a été remplie avec 5 cartes Or (valant 6 chacune).\n";
     }
 }
@@ -328,7 +330,7 @@ void Partie::initialiserReserve() {
     reserve.push_back(std::make_shared<Cartes>("Argent"));
     reserve.push_back(std::make_shared<Cartes>("Cuivre"));
     reserve.push_back(std::make_shared<Cartes>("Domaine"));
-    reserve.push_back(std::make_shared<Cartes>("Duché"));
+    reserve.push_back(std::make_shared<Cartes>("Duche"));
     reserve.push_back(std::make_shared<Cartes>("Province"));
     reserve.push_back(std::make_shared<Cartes>("Malediction"));
 

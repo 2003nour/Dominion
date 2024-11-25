@@ -22,23 +22,21 @@ Joueur::Joueur(const std::string& nom)
         deck.push_back(carte);
         
     }
-
-    // Mélanger le deck
     melangerDeck();
 
-    // Piocher les 5 premières cartes dans la main
+    // on pioche les 5 premières cartes dans la main
     for (int i = 0; i < 5 && !deck.empty(); ++i) {
         main.push_back(deck.back());
         deck.pop_back();
     }
 
-    // Vérifier les cartes restantes dans le deck après la pioche
-    std::cout << "Deck apres pioche initiale de 5 cartes :\n";
+    // on verifie les cartes restantes dans le deck après la pioche
+    std::cout << "Deck de " << nom << " apres pioche initiale de 5 cartes :\n";
     for (const auto& carte : deck) {
         std::cout << "- " << carte->getNom() << " (" << carte->getType() << ")\n";
     }
 
-    // Afficher les cartes de la main pour vérification
+    // on affiche les cartes de la main pour vérification
     std::cout << "Main initiale de " << nom << " :\n";
     for (const auto& carte : main) {
         std::cout << "- " << carte->getNom() << " (" << carte->getType() << ")\n";
@@ -72,36 +70,28 @@ Joueur::Joueur(const std::string& nom)
 }
 
 
-std::vector<std::shared_ptr<Cartes>>& Joueur::getMain() {
-    return main;
-}
+void Joueur::melangerDeck() {
+
+    std::mt19937 g(static_cast<unsigned int>(std::time(0))); // ici ça permet de génerer des nombres pseudo aléatoires
+    std::shuffle(deck.begin(), deck.end(), g); // fontion de la bibliothèque <algorithm> mélangeant les éléments le deck ici
+} 
+
+std::vector<std::shared_ptr<Cartes>>& Joueur::getMain() {return main;}
+
+void Joueur::setMain(const std::vector<std::shared_ptr<Cartes>>& mano) {main = mano;}
 
 
-void Joueur::setMain(const std::vector<std::shared_ptr<Cartes>>& mano) {
-    main = mano;
-}
+int Joueur::getArgent() const { return argent;}
+
+void Joueur::setArgent(int n_argent) {argent = n_argent;}
+
+void Joueur::setPointsVictoire(int points) {pointsVictoire = points;}
 
 
-int Joueur::getArgent() const {
-    return argent;
-}
-
-void Joueur::setArgent(int n_argent) {
-    argent = n_argent;
-}
-void Joueur::setPointsVictoire(int points) {
-    pointsVictoire = points;
-}
+void Joueur::setDeck(const std::vector<std::shared_ptr<Cartes>>& nouveauDeck) {deck = nouveauDeck;}
 
 
-void Joueur::setDeck(const std::vector<std::shared_ptr<Cartes>>& nouveauDeck) {
-    deck = nouveauDeck;
-}
-
-
-void Joueur::setNombreActions(int nbactions) {
-    nombreActions = nbactions;
-}
+void Joueur::setNombreActions(int nbactions) {nombreActions = nbactions;}
 void Joueur::setNombreAchats(int nbAchats) {
     nombreAchats = nbAchats;
 }
@@ -112,10 +102,10 @@ std::shared_ptr<Cartes> Joueur::piocher(int nombre) {
         if (deck.empty()) {
             // Reconstituer le deck si vide
             if (!defausse.empty()) {
-                deck = defausse;
-                defausse.clear();
+                deck = defausse; // Reconstitue le deck avec les cartes de la défausse.
+                defausse.clear(); // Vide la défausse.
                 melangerDeck();
-                std::cout << "Le deck a été reconstitué à partir de la défausse.\n";
+                std::cout << "Le deck a été reconstitue a partir de la defausse.\n";
             } else {
                 std::cout << "Erreur : Plus de cartes disponibles pour le joueur " << nom << ".\n";
                 break;
@@ -124,17 +114,14 @@ std::shared_ptr<Cartes> Joueur::piocher(int nombre) {
 
         // Piocher une carte depuis le deck
         if (!deck.empty()) {
-            derniereCartePiocher = deck.back();
+            derniereCartePiocher = deck.back(); // Prend la derniere carte du deck
             main.push_back(derniereCartePiocher);
-            deck.pop_back();
-
-            // DEBUG : Vérifier les cartes ajoutées à la main
-            std::cout << "Carte piochée : " << derniereCartePiocher->getNom() << " (" << derniereCartePiocher->getType() << ")\n";
+            deck.pop_back();//retire la carte prise
         }
     }
 
     // DEBUG : Vérifier l'état de la main après la pioche
-    std::cout << "Main après pioche :\n";
+    std::cout << "Main apres pioche :\n";
     for (const auto& carte : main) {
         std::cout << "- " << carte->getNom() << " (" << carte->getType() << ")\n";
     }
@@ -146,7 +133,7 @@ std::shared_ptr<Cartes> Joueur::piocher(int nombre) {
 void Joueur::piocherMalediction() {
     // Trouver la carte Malédiction dans la réserve
     auto it = std::find_if(Cartes::toutesLesCartes.begin(), Cartes::toutesLesCartes.end(),
-        [](const std::shared_ptr<Cartes>& carte) { return carte->getNom() == "Malediction" && carte->getStock() > 0; });
+        [](const std::shared_ptr<Cartes>& carte) { return carte->getNom() == "Malediction" && carte->getStock() > 0; }); // prédicat de la fonction find_if qui retourne true si malediction est présent dans la réserve 
 
     if (it != Cartes::toutesLesCartes.end()) {
         // Ajouter la carte Malédiction à la défausse du joueur
@@ -155,7 +142,7 @@ void Joueur::piocherMalediction() {
         // Réduire le stock de Malédiction
         (*it)->setStock((*it)->getStock() - 1);
 
-        std::cout << getNom() << " reçoit une carte Malédiction, ce qui réduit ses points de victoire.\n";
+        std::cout << getNom() << " reçoit une carte Malédiction, ce qui reduit ses points de victoire.\n";
     } else {
         std::cout << "Plus de cartes Malédiction disponibles dans la réserve.\n";
     }
@@ -163,7 +150,7 @@ void Joueur::piocherMalediction() {
 
 
 bool Joueur::possedeCarte(const std::string& nomCarte) const {
-    for (const auto& carte : main) { // Ici, 'main' est supposé être la liste des cartes en main
+    for (const auto& carte : main) { // Ici, 'main' est la liste des cartes en main
         if (carte->getNom() == nomCarte) {
             return true;
         }
@@ -194,9 +181,10 @@ int Joueur::calculerOrEnMain() const {
     return totalOr;
 }
 
-
 int Joueur::calculerPointsVictoire() const {
     int points = 0;
+
+    // Parcourir le deck
     for (const auto& carte : deck) {
         if (carte->getType() == "Victoire") {
             if (carte->getNom() == "Domaine") points += 1;
@@ -205,8 +193,30 @@ int Joueur::calculerPointsVictoire() const {
             else if (carte->getNom() == "Malediction") points -= 1;
         }
     }
+
+    // Parcourir la défausse
+    for (const auto& carte : defausse) {
+        if (carte->getType() == "Victoire") {
+            if (carte->getNom() == "Domaine") points += 1;
+            else if (carte->getNom() == "Duche") points += 3;
+            else if (carte->getNom() == "Province") points += 6;
+            else if (carte->getNom() == "Malediction") points -= 1;
+        }
+    }
+
+    // Parcourir la main
+    for (const auto& carte : main) {
+        if (carte->getType() == "Victoire") {
+            if (carte->getNom() == "Domaine") points += 1;
+            else if (carte->getNom() == "Duche") points += 3;
+            else if (carte->getNom() == "Province") points += 6;
+            else if (carte->getNom() == "Malediction") points -= 1;
+        }
+    }
+
     return points;
 }
+
 
 void Joueur::jouerAction(int indiceCarte) {
     if (static_cast<size_t>(indiceCarte) < main.size() && main[indiceCarte]->getType() == "Royaume" && nombreActions > 0) {
@@ -364,11 +374,6 @@ std::vector<std::shared_ptr<Cartes>>& Joueur::getDefausse() {
     return defausse;
 }
 
-void Joueur::melangerDeck() {
-
-    std::mt19937 g(static_cast<unsigned int>(std::time(0)));
-    std::shuffle(deck.begin(), deck.end(), g);
-} 
 void Joueur::supprimerCarte(const std::shared_ptr<Cartes>& carte) {
     // Supprimer de la main
     auto it = std::find(main.begin(), main.end(), carte);

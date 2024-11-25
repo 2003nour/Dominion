@@ -13,7 +13,7 @@ int main() {
     // Initialisation des joueurs
     int nombreJoueurs;
     std::string saisie;
-    std::cout << "Entrez le nombre de joueurs (2-4)  ";
+    std::cout << "Entrez le nombre de joueurs (2-4)  : ";
     std::cin >> saisie;
 
     if (saisie == "fin") {
@@ -22,7 +22,7 @@ int main() {
     }
 
     try {
-        nombreJoueurs = std::stoi(saisie);
+        nombreJoueurs = std::stoi(saisie); 
     } catch (...) {
         std::cout << "Entrée invalide. Le jeu necessite un nombre de joueurs valide entre 2 et 4." << std::endl;
         return 1;

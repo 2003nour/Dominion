@@ -19,15 +19,15 @@ Cartes::Cartes(const std::string& nom) : nom(nom), cout(0), stock(0) {
         } else if (nom == "Cuivre") {
             cout = 0;
             stock = 60;
-            description = "Permet de gagner 1 pièce.";
+            description = "Permet de gagner 1 piece.";
         }
-    } else if (nom == "Domaine" || nom == "Duché" || nom == "Province" || nom == "Malediction") {
+    } else if (nom == "Domaine" || nom == "Duche" || nom == "Province" || nom == "Malediction") {
         type = "Victoire";
         if (nom == "Domaine") {
             cout = 2;
             stock = 24;
             description = "Vous rapporte 1 point de victoire.";
-        } else if (nom == "Duché") {
+        } else if (nom == "Duche") {
             cout = 5;
             stock = 12;
             description = "Vous rapporte 3 points de victoire.";
@@ -69,4 +69,4 @@ Cartes::~Cartes() {
 
 bool Cartes::operator==(const Cartes& autre) const {
     return this->nom == autre.nom;
-}
+} // Surcharge de l'opérateur d'égalité pour déterminer si deux cartes sont égales

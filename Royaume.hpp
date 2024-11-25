@@ -31,9 +31,8 @@ public:
     void Jardins(Joueur& joueur,Partie& partie);
     void Sorciere(Joueur& joueur, Partie& partie);
     void Voleur(Joueur& joueur, Partie& partie);
-    virtual void appliquerEffet(Joueur& joueur, Partie& partie);
     
 
 };
 
-#endif // ROYAUME_HPP
+#endif 
