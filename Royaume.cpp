@@ -35,10 +35,10 @@ Royaume::Royaume(const std::string& nom) : Cartes(nom) {
         description = "Les adversaires révèlent les 2 premières cartes de leur deck, et vous en piquez une si elle est de type trésor.";
     } else if (nom == "Bucheron") {
         cout = 3;
-        description = "Permet de gagner 2 pièces virtuelles et un achat supplémentaire.";
+        description = "Permet de gagner 2 pièces virtuelles et un achat supplémentaire";
     } else if (nom == "Douve") {
         cout = 2;
-        description = "Permet de se protéger des attaques adverses.";
+        description = "Permet de se protéger des attaques adverses ou de piocher 2 cartes supplementaires.";
     } else if (nom == "Festin") {
         cout = 4;
         description = "Permet de gagner une carte coûtant jusqu'à 5, jetée après utilisation.";
@@ -55,7 +55,7 @@ Royaume::Royaume(const std::string& nom) : Cartes(nom) {
 // Destructeur
 Royaume::~Royaume() {}
 
-// Atelier testé
+
 void Royaume::Atelier(Joueur& joueur, Partie& partie) {
     std::cout << "Quelle carte souhaitez-vous ajouter à votre deck (coût <= 4) ?\n";
 
@@ -107,23 +107,17 @@ void Royaume::Atelier(Joueur& joueur, Partie& partie) {
 
 
 
-// Bucheron testé
+
 void Royaume::Bucheron(Joueur& joueur) {
     std::cout << "Effet Bûcheron en cours...\n";
 
-    // Ajouter 2 pièces virtuelles
     joueur.ajouterArgentVirtuel(2);
-
-    // Augmenter le nombre d'achats
     joueur.setNombreAchats(joueur.getNombreAchats() + 1);
 
-    // Afficher le résultat de l'effet
+    // Afficher l'effet
     std::cout << joueur.getNom() << " gagne 2 pièces (virtuelles) et un achat supplémentaire.\n";
 
-    // Débogage : Afficher l'état du joueur après l'effet
-    std::cout << "État après Bûcheron :\n";
-    std::cout << "- Argent virtuel : " << joueur.getArgentVirtuel() << "\n";
-    std::cout << "- Nombre d'achats disponibles : " << joueur.getNombreAchats() << "\n";
+    
 }
 
 
@@ -143,7 +137,7 @@ void Royaume::Chapelle(Joueur& joueur) {
         std::cout << "Choisissez une carte à supprimer (0 pour terminer) : ";
         std::cin >> choix;
 
-        // Si le joueur entre "0", il arrête la suppression
+        // Si le joueur entre "0", il arrête la suppression et l'action se termine
         if (choix == 0) {
             break;
         }
@@ -169,14 +163,12 @@ void Royaume::Chapelle(Joueur& joueur) {
 }
 
 
-// Douve pas besoin de test
 void Royaume::Douve(Joueur& joueur) {
         joueur.piocher(2);
         std::cout << joueur.getNom() << " pioche 2 cartes supplémentaires.\n";
     }
 
 
-// Festin testé
 void Royaume::Festin(Joueur& joueur, Partie& partie) {
     std::cout << "Quelle carte souhaitez-vous gagner (coût <= 5) ?\n";
 
@@ -225,14 +217,14 @@ void Royaume::Festin(Joueur& joueur, Partie& partie) {
 }
 
 
-// Jardins
+
 void Royaume::Jardins(Joueur& joueur,Partie& partie) {
     if (this->nom == "Jardins" && partie.estFinie()) {
         joueur.setPointsVictoire(joueur.getPointsVictoire() + joueur.getDeck().size() / 10);
     }
 }
 
-// Laboratoire testé
+
 void Royaume::Laboratoire(Joueur& joueur) {
         joueur.piocher(2);
         joueur.setNombreActions(joueur.getNombreActions() + 1);
@@ -240,7 +232,7 @@ void Royaume::Laboratoire(Joueur& joueur) {
     }
 
 
-// testés
+
 void Royaume::Village(Joueur& joueur) {
     std::cout << joueur.getNom() << " a pioche 1 carte et gagne 2 actions supplémentaires.\n";
 
@@ -267,7 +259,7 @@ void Royaume::Village(Joueur& joueur) {
     }
 }
 
-// testé
+
 void Royaume::Sorciere(Joueur& joueur, Partie& partie) {
         joueur.piocher(2);
         for (auto& autreJoueur : partie.getJoueurs()) {
@@ -279,7 +271,7 @@ void Royaume::Sorciere(Joueur& joueur, Partie& partie) {
     }
 
 
-//  testé
+
 void Royaume::Voleur(Joueur& joueur, Partie& partie) {
     for (Joueur& autreJoueur : partie.getJoueurs()) { // Référence non-constante pour permettre modification
         if (&autreJoueur != &joueur && !autreJoueur.possedeCarte("Douve")) { // Ne pas cibler le joueur lui-même
@@ -326,6 +318,6 @@ void Royaume::Voleur(Joueur& joueur, Partie& partie) {
         }
     }
 
-    // Jeter la carte Voleur après son utilisation
+    // Jeter la carte Voleur dans le rebut
     partie.jeterCarte(std::make_shared<Royaume>("Voleur"));
 }

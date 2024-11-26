@@ -23,16 +23,14 @@ public:
     std::vector<std::shared_ptr<Cartes>> reserve;
 private:
     std::vector<Joueur> joueurs;
-    
     std::vector<std::shared_ptr<Cartes>> rebuts;
-
     int joueurActuel;
+    
 
     // Méthodes internes
     void initialiserReserve();
     void afficherEtat() const;
 
-    // Nouvelles méthodes ajoutées
     void acheterCarte(Joueur& joueur);
     void activerModeFinDePartie();
 

@@ -53,6 +53,6 @@ int main() {
     // Lancement du jeu
     partie.demarrer();
 
-    std::cout << "Merci d'avoir joue a Dominion ! a bientot !" << std::endl;
+    std::cout << "Merci d'avoir joue a Dominion !" << std::endl;
     return 0;
 }

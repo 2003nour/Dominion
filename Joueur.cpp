@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 Joueur::Joueur(const std::string& nom)
-    : nom(nom), argentVirtuel(0), pointsVictoire(0), nombreActions(1), nombreAchats(1), argent(0) {
+    : argentVirtuel(0),nom(nom) , pointsVictoire(0), nombreActions(1), nombreAchats(1), argent(0) {
     // Ajouter 7 cartes Cuivre au deck
     for (int i = 0; i < 7; ++i) {
         auto carte = std::make_shared<Cartes>("Cuivre");
@@ -78,7 +78,7 @@ void Joueur::melangerDeck() {
         std::swap(deck[i], deck[randomIndex]);
     }
 
-    std::cout << "Le deck de " << nom << " a été mélangé.\n";
+    std::cout << "Le deck de " << nom << " a ete melange.\n";
 }
 
 std::vector<std::shared_ptr<Cartes>>& Joueur::getMain() {return main;}
@@ -110,7 +110,7 @@ std::shared_ptr<Cartes> Joueur::piocher(int nombre) {
                 deck = defausse; // Reconstitue le deck avec les cartes de la défausse.
                 defausse.clear(); // Vide la défausse.
                 melangerDeck();
-                std::cout << "Le deck a été reconstitue a partir de la defausse.\n";
+                std::cout << "Le deck a ete reconstitue a partir de la defausse.\n";
             } else {
                 std::cout << "Erreur : Plus de cartes disponibles pour le joueur " << nom << ".\n";
                 break;
@@ -199,10 +199,12 @@ int Joueur::calculerOrEnMain() {
     // Ajout de l'argent virtuel au total
     argentTotal += argentVirtuel;
 
-    // Met à jour l'argent dans l'objet Joueur
+    // Mise à jour de la valeur d'argent dans l'objet Joueur
     argent = argentTotal;
+
     return argentTotal;
 }
+
 
 int Joueur::calculerPointsVictoire() const {
     int points = 0;
@@ -409,7 +411,7 @@ void Joueur::supprimerCarte(const std::shared_ptr<Cartes>& carte) {
     auto it = std::find(main.begin(), main.end(), carte);
     if (it != main.end()) {
         main.erase(it);
-        std::cout << "Carte " << carte->getNom() << " supprimée de la main.\n";
+        std::cout << "Carte " << carte->getNom() << " supprimee de la main.\n";
         return;
     }
 
@@ -417,7 +419,7 @@ void Joueur::supprimerCarte(const std::shared_ptr<Cartes>& carte) {
     it = std::find(deck.begin(), deck.end(), carte);
     if (it != deck.end()) {
         deck.erase(it);
-        std::cout << "Carte " << carte->getNom() << " supprimée du deck.\n";
+        std::cout << "Carte " << carte->getNom() << " supprimee du deck.\n";
         return;
     }
 
@@ -425,6 +427,6 @@ void Joueur::supprimerCarte(const std::shared_ptr<Cartes>& carte) {
     it = std::find(defausse.begin(), defausse.end(), carte);
     if (it != defausse.end()) {
         defausse.erase(it);
-        std::cout << "Carte " << carte->getNom() << " supprimée de la défausse.\n";
+        std::cout << "Carte " << carte->getNom() << " supprimee de la défausse.\n";
     }
 }

@@ -59,7 +59,7 @@ void Partie::phaseAction(Joueur& joueur) {
         }
 
         int choix;
-        std::cout << "Choisissez une carte Action à jouer (0 pour passer) : ";
+        std::cout << "Choisissez une carte Action  (0 pour passer) : ";
         std::cin >> choix;
         if (choix== -1) {
             activerModeFinDePartie();
@@ -141,7 +141,7 @@ void Partie::phaseAction(Joueur& joueur) {
     }
 }
 void Partie::phaseAchat(Joueur& joueur) {
-    joueur.calculerOrEnMain(); // Met à jour l'or disponible avant d'entrer dans la phase d'achat
+    joueur.calculerOrEnMain(); // Met à jour l'argent disponible avant d'entrer dans la phase d'achat
     
     std::cout << "\nPhase d'Achat pour " << joueur.getNom() << "\n";
 
@@ -153,7 +153,7 @@ void Partie::phaseAchat(Joueur& joueur) {
         for (size_t i = 0; i < reserve.size(); ++i) {
             auto carte = reserve[i];
             std::cout << i + 1 << " - " << carte->getNom() << " (Cout : " << carte->getCout()
-                      << ", Stock : " << carte->getStock() << ")\n";
+                    << ", Stock : " << carte->getStock() << ")\n";
         }
 
         int choix;
@@ -167,8 +167,13 @@ void Partie::phaseAchat(Joueur& joueur) {
             } else {
                 std::cout << "Pas assez d'or ou stock épuisé.\n";
             }
-        } else if (choix == 0) {
+        } 
+        else if (choix == 0) {
             break;
+        }
+        if (choix== -1) {
+            activerModeFinDePartie();
+            return; // Terminez immédiatement cette phase
         }
 
         // Recalculer l'argent disponible après chaque achat
