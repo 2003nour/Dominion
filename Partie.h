@@ -33,7 +33,6 @@ private:
     void afficherEtat() const;
 
     // Nouvelles méthodes ajoutées
-    void calculerOrEnMain(Joueur& joueur);
     void acheterCarte(Joueur& joueur);
     void activerModeFinDePartie();
 

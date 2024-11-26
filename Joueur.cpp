@@ -68,13 +68,18 @@ Joueur::Joueur(const std::string& nom)
     
 
 }
-
-
 void Joueur::melangerDeck() {
+    // Utilisation de rand pour un mélange manuel
+    for (size_t i = 0; i < deck.size(); ++i) {
+        // Générer un index aléatoire entre i et la fin du deck
+        size_t randomIndex = i + rand() % (deck.size() - i);
 
-    std::mt19937 g(static_cast<unsigned int>(std::time(0))); // ici ça permet de génerer des nombres pseudo aléatoires
-    std::shuffle(deck.begin(), deck.end(), g); // fontion de la bibliothèque <algorithm> mélangeant les éléments le deck ici
-} 
+        // Échanger les cartes à l'index actuel et à l'index aléatoire
+        std::swap(deck[i], deck[randomIndex]);
+    }
+
+    std::cout << "Le deck de " << nom << " a été mélangé.\n";
+}
 
 std::vector<std::shared_ptr<Cartes>>& Joueur::getMain() {return main;}
 
@@ -120,7 +125,7 @@ std::shared_ptr<Cartes> Joueur::piocher(int nombre) {
         }
     }
 
-    // DEBUG : Vérifier l'état de la main après la pioche
+    //  Vérifier l'état de la main après la pioche
     std::cout << "Main apres pioche :\n";
     for (const auto& carte : main) {
         std::cout << "- " << carte->getNom() << " (" << carte->getType() << ")\n";
@@ -205,7 +210,7 @@ int Joueur::calculerPointsVictoire() const {
     }
 
     // Parcourir la main
-    for (const auto& carte : main) {
+    for (const auto& carte : main) { // ici on utilise la réf const pour aps copier chaque élément (mémoire) de la collection et pour ne pas les modifier
         if (carte->getType() == "Victoire") {
             if (carte->getNom() == "Domaine") points += 1;
             else if (carte->getNom() == "Duche") points += 3;
@@ -219,7 +224,7 @@ int Joueur::calculerPointsVictoire() const {
 
 
 void Joueur::jouerAction(int indiceCarte) {
-    if (static_cast<size_t>(indiceCarte) < main.size() && main[indiceCarte]->getType() == "Royaume" && nombreActions > 0) {
+    if (static_cast<size_t>(indiceCarte) < main.size() && main[indiceCarte]->getType() == "Royaume" && nombreActions > 0) { // conversion de indicecarte en type entier non signé 
         nombreActions--;
         defausse.push_back(main[indiceCarte]); // Ajoute la carte dans la défausse
         main.erase(main.begin() + indiceCarte); // Retire la carte de la main
@@ -232,8 +237,6 @@ void Joueur::acheterCarte(Cartes& carte) {
         int coutRestant = carte.getCout();
 
         if (calculerOrEnMain() >= coutRestant && carte.getStock() > 0) {
-            std::cout << "DEBUG: Tentative d'achat de " << carte.getNom() << " (Coût : " << coutRestant << ")\n";
-
             // Utiliser les cartes Trésor pour payer
             for (auto it = main.begin(); it != main.end() && coutRestant > 0; ) {
                 if ((*it)->getType() == "Tresor") {
@@ -254,12 +257,12 @@ void Joueur::acheterCarte(Cartes& carte) {
                 defausse.push_back(std::make_shared<Cartes>(carte));
                 carte.setStock(carte.getStock() - 1); // Réduire le stock de la carte
                 nombreAchats--; // Réduire le nombre d'achats disponibles
-                std::cout << "DEBUG: Achat réussi. " << carte.getNom() << " a été ajouté à la défausse.\n";
+                std::cout << " Achat réussi. " << carte.getNom() << " a ete ajoute e la defausse.\n";
             } else {
                 std::cout << "Erreur : Pas assez de Trésors pour acheter " << carte.getNom() << ".\n";
             }
         } else {
-            std::cout << "Erreur : Pas assez d'or ou stock épuisé pour " << carte.getNom() << ".\n";
+            std::cout << "Erreur : Pas assez d'or ou stock epuise pour " << carte.getNom() << ".\n";
         }
     } else {
         std::cout << "Erreur : Aucun achat disponible.\n";

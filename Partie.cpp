@@ -44,18 +44,7 @@ void Partie::jouerTour() {
     std::cout << "Fin du tour de " << joueur.getNom() << ".\n";
 }
 
-void Partie::calculerOrEnMain(Joueur& joueur) {
-    int argentTotal = 0;
-    for (const auto& carte : joueur.getDeck()) { // carte est un std::shared_ptr<Cartes>
-        if (carte->getType() == "Tresor") { // Utilisation de -> au lieu de .
-            if (carte->getNom() == "Cuivre") argentTotal += 1;
-            else if (carte->getNom() == "Argent") argentTotal += 2;
-            else if (carte->getNom() == "Or") argentTotal += 3;
-        }
-    }
-    joueur.ajouterArgent(argentTotal); // Met à jour l'argent du joueur
-    std::cout << joueur.getNom() << " a " << argentTotal << " pièces d'or en main.\n";
-}
+
 void Partie::phaseAction(Joueur& joueur) {
     std::cout << "\nPhase d'Action pour " << joueur.getNom() << "\n";
     
@@ -233,7 +222,7 @@ void Partie::jeterCarte(std::shared_ptr<Cartes> carte) {
 
     // Ajouter la carte aux rebuts
     rebuts.push_back(carte);
-    std::cout << "La carte " << carte->getNom() << " a été jetée dans les rebuts.\n";
+    std::cout << "La carte " << carte->getNom() << " a ete jetee dans les rebuts.\n";
 }
 
 

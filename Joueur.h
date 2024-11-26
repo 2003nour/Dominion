@@ -16,12 +16,12 @@ protected:
     std::vector<std::shared_ptr<Cartes>> deck;
     std::vector<std::shared_ptr<Cartes>> main;
     std::vector<std::shared_ptr<Cartes>> defausse;
-
+//Utiliser un std::shared_ptr permet de gérer la mémoire dynamiquement Quand plus aucun std::shared_ptr ne pointe vers une carte, celle-ci est automatiquement détruite.
 public:
     // Constructeur
     Joueur(const std::string& nom);
     // Getters et setters
-    std::vector<std::shared_ptr<Cartes>>& getMain(); // sans const
+    std::vector<std::shared_ptr<Cartes>>& getMain(); 
     void setMain(const std::vector<std::shared_ptr<Cartes>>& mano);
     int getArgent() const;
     void setArgent(int n_argent);

@@ -98,10 +98,6 @@ void Royaume::Atelier(Joueur& joueur, Partie& partie) {
 
         carteChoisie->setStock(carteChoisie->getStock() - 1);
 
-        // DEBUG : Afficher le stock après décrémentation
-        std::cout << "DEBUG: Stock après décrémentation pour " << carteChoisie->getNom()
-                << ": " << carteChoisie->getStock() << "\n";
-
         joueur.getDefausse().push_back(carteChoisie);
         std::cout << "La carte " << carteChoisie->getNom() << " a été ajoutée à votre défausse.\n";
     } else {
@@ -115,9 +111,6 @@ void Royaume::Atelier(Joueur& joueur, Partie& partie) {
 void Royaume::Bucheron(Joueur& joueur) {
     std::cout << "Effet Bûcheron en cours...\n";
 
-    // Débogage : Nombre d'achats avant l'effet
-    std::cout << "DEBUG: Nombre d'achats avant : " << joueur.getNombreAchats() << "\n";
-
     // Ajouter 2 cartes Cuivre directement dans la main
     for (int i = 0; i < 2; ++i) {
         auto carteCuivre = std::make_shared<Cartes>("Cuivre");
@@ -127,8 +120,7 @@ void Royaume::Bucheron(Joueur& joueur) {
     // Augmenter le nombre d'achats
     joueur.setNombreAchats(joueur.getNombreAchats() + 1);
 
-    // Débogage : Nombre d'achats après l'effet
-    std::cout << "DEBUG: Nombre d'achats après : " << joueur.getNombreAchats() << "\n";
+
 
     // Afficher le résultat de l'effet
     std::cout << joueur.getNom() << " gagne 2 pièces (Cuivres ajoutés à la main) et un achat supplémentaire.\n";
@@ -143,7 +135,6 @@ void Royaume::Bucheron(Joueur& joueur) {
 
 
 
-//  testé
 void Royaume::Chapelle(Joueur& joueur) {
     int choix;
     int cartesADefauser = 0;
@@ -190,7 +181,6 @@ void Royaume::Chapelle(Joueur& joueur) {
 void Royaume::Douve(Joueur& joueur) {
         joueur.piocher(2);
         std::cout << joueur.getNom() << " pioche 2 cartes supplémentaires.\n";
-    
     }
 
 
@@ -198,12 +188,12 @@ void Royaume::Douve(Joueur& joueur) {
 void Royaume::Festin(Joueur& joueur, Partie& partie) {
     std::cout << "Quelle carte souhaitez-vous gagner (coût <= 5) ?\n";
 
-    // Filtrer les cartes valides (coût <= 5 et en stock), tout en éliminant les doublons
+    
     std::vector<std::shared_ptr<Cartes>> cartesDisponibles;
     std::set<std::string> nomsCartesAjoutes; // Pour éviter les doublons
 
     for (const auto& carte : partie.reserve) { // Utiliser les cartes directement depuis la réserve
-        if (carte->getCout() <= 5 && carte->getStock() > 0 && nomsCartesAjoutes.find(carte->getNom()) == nomsCartesAjoutes.end()) {
+        if (carte->getCout() <= 5 && carte->getStock() > 0 && nomsCartesAjoutes.find(carte->getNom()) == nomsCartesAjoutes.end()) { // Filtrer les cartes valides (coût <= 5 et en stock)  tout en éliminant les doublons
             cartesDisponibles.push_back(carte);
             nomsCartesAjoutes.insert(carte->getNom());
         }
@@ -230,15 +220,7 @@ void Royaume::Festin(Joueur& joueur, Partie& partie) {
     if (choix > 0 && static_cast<size_t>(choix) <= cartesDisponibles.size()) {
         auto carteChoisie = cartesDisponibles[choix - 1];
 
-        // DEBUG : Afficher le stock avant décrémentation
-        std::cout << "DEBUG: Stock avant décrémentation pour " << carteChoisie->getNom()
-                << ": " << carteChoisie->getStock() << "\n";
-
         carteChoisie->setStock(carteChoisie->getStock() - 1);
-
-        // DEBUG : Afficher le stock après décrémentation
-        std::cout << "DEBUG: Stock après décrémentation pour " << carteChoisie->getNom()
-                << ": " << carteChoisie->getStock() << "\n";
 
         joueur.getDefausse().push_back(carteChoisie);
         std::cout << "Vous avez choisi : " << carteChoisie->getNom() << ". Elle a été ajoutée à votre défausse.\n";
