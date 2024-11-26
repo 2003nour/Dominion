@@ -8,6 +8,7 @@
 
 class Joueur {
 protected:
+     int argentVirtuel ;
     std::string nom; 
     int pointsVictoire;
     int nombreActions;
@@ -20,6 +21,9 @@ protected:
 public:
     // Constructeur
     Joueur(const std::string& nom);
+      void ajouterArgentVirtuel(int montant);
+      void resetArgentVirtuel() ;
+       int getArgentVirtuel() const ;
     // Getters et setters
     std::vector<std::shared_ptr<Cartes>>& getMain(); 
     void setMain(const std::vector<std::shared_ptr<Cartes>>& mano);
@@ -32,7 +36,7 @@ public:
     void setNombreAchats(int nombreAchats);
     std::shared_ptr<Cartes> piocher(int nombre) ;
     void piocherMalediction() ;
-    int calculerOrEnMain() const;
+    int calculerOrEnMain() ;
     void supprimerCarte(const std::shared_ptr<Cartes>& carte);
 
 

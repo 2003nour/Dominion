@@ -140,67 +140,46 @@ void Partie::phaseAction(Joueur& joueur) {
         }
     }
 }
-
-
 void Partie::phaseAchat(Joueur& joueur) {
     joueur.calculerOrEnMain(); // Met à jour l'or disponible avant d'entrer dans la phase d'achat
-
+    
     std::cout << "\nPhase d'Achat pour " << joueur.getNom() << "\n";
 
-    while (joueur.getNombreAchats() > 0) { // Boucle tant qu'il y a des achats disponibles
-
-        int argentDisponible = joueur.calculerOrEnMain(); // Recalculer l'or en main
+    while (joueur.getNombreAchats() > 0) {
+        int argentDisponible = joueur.calculerOrEnMain();
         std::cout << "Or disponible dans la main : " << argentDisponible << " pièces\n";
 
-        std::cout << "Cartes disponibles dans la réserve :\n";
+        // Affichage des cartes dans la réserve
         for (size_t i = 0; i < reserve.size(); ++i) {
             auto carte = reserve[i];
             std::cout << i + 1 << " - " << carte->getNom() << " (Cout : " << carte->getCout()
-                    << ", Stock : " << carte->getStock() << ")\n";
+                      << ", Stock : " << carte->getStock() << ")\n";
         }
 
         int choix;
-        while (true) {
-            std::cout << "Choisissez une carte à acheter (0 pour passer) : ";
-            std::cin >> choix;
+        std::cout << "Choisissez une carte à acheter (0 pour passer) : ";
+        std::cin >> choix;
 
-            if (std::cin.fail()) {
-                std::cin.clear(); // Réinitialise le flux en cas d'erreur
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Vide le flux
-                std::cout << "Entrée invalide. Veuillez entrer un nombre entier.\n";
-            } else if (choix >= 0 && static_cast<size_t>(choix) <= reserve.size()) {
-                break; // Entrée valide
-            } else {
-                std::cout << "Choix hors des limites. Veuillez réessayer.\n";
-            }
-        }
-        if (choix==-1){
-            activerModeFinDePartie();
-            return; // Quittez immédiatement la phase
-        }
-        
-        if (choix > 0) {
+        if (choix > 0 && static_cast<size_t>(choix) <= reserve.size()) {
             auto carte = reserve[choix - 1];
-            std::cout << "Avant achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
             if (argentDisponible >= carte->getCout() && carte->getStock() > 0) {
                 joueur.acheterCarte(*carte);
-                argentDisponible = joueur.calculerOrEnMain(); // Recalculer l'or après achat
-                std::cout << "Après achat dans la réserve : Stock de " << carte->getNom() << " = " << carte->getStock() << "\n";
             } else {
-                std::cout << "Pas assez d'or en main ou stock épuisé pour " << carte->getNom() << ".\n";
+                std::cout << "Pas assez d'or ou stock épuisé.\n";
             }
-        } else {
-            std::cout << "Aucun achat effectué.\n";
-            break; // Si le joueur choisit de passer, sortir de la boucle d'achat
+        } else if (choix == 0) {
+            break;
         }
 
-        joueur.afficherEtat();
+        // Recalculer l'argent disponible après chaque achat
+        joueur.calculerOrEnMain();
     }
 
-    if (joueur.getNombreAchats() == 0) {
-        std::cout << joueur.getNom() << " n'a plus d'achats disponibles.\n";
-    }
+    // Remettre l'argent virtuel à zéro après la phase d'achat
+    joueur.resetArgentVirtuel();
+    std::cout << "Argent virtuel réinitialisé après la phase d'achat.\n";
 }
+
 
 
 void Partie::phaseAjustement(Joueur& joueur) {

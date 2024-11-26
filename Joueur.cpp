@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 Joueur::Joueur(const std::string& nom)
-    : nom(nom), pointsVictoire(0), nombreActions(1), nombreAchats(1), argent(0) {
+    : nom(nom), argentVirtuel(0), pointsVictoire(0), nombreActions(1), nombreAchats(1), argent(0) {
     // Ajouter 7 cartes Cuivre au deck
     for (int i = 0; i < 7; ++i) {
         auto carte = std::make_shared<Cartes>("Cuivre");
@@ -174,16 +174,34 @@ int Joueur::getNombreActions() const {
 void Joueur::ajouterArgent(int montant) {
     argent += montant;
 }
-int Joueur::calculerOrEnMain() const {
-    int totalOr = 0;
+  void  Joueur::ajouterArgentVirtuel(int montant) {
+        argentVirtuel += montant;
+    }
+      void  Joueur::resetArgentVirtuel() {
+        argentVirtuel = 0;
+    }
+
+    int  Joueur::getArgentVirtuel() const {
+        return argentVirtuel;
+    }
+int Joueur::calculerOrEnMain() {
+    int argentTotal = 0;
+
+    // Parcourt toutes les cartes dans la main pour calculer l'argent
     for (const auto& carte : main) {
         if (carte->getType() == "Tresor") {
-            if (carte->getNom() == "Cuivre") totalOr += 1;
-            else if (carte->getNom() == "Argent") totalOr += 2;
-            else if (carte->getNom() == "Or") totalOr += 3;
+            if (carte->getNom() == "Cuivre") argentTotal += 1;
+            else if (carte->getNom() == "Argent") argentTotal += 2;
+            else if (carte->getNom() == "Or") argentTotal += 3;
         }
     }
-    return totalOr;
+
+    // Ajout de l'argent virtuel au total
+    argentTotal += argentVirtuel;
+
+    // Met à jour l'argent dans l'objet Joueur
+    argent = argentTotal;
+    return argentTotal;
 }
 
 int Joueur::calculerPointsVictoire() const {
@@ -235,9 +253,17 @@ void Joueur::jouerAction(int indiceCarte) {
 void Joueur::acheterCarte(Cartes& carte) {
     if (nombreAchats > 0) {
         int coutRestant = carte.getCout();
+        int orDisponible = calculerOrEnMain(); // Inclut l'argent virtuel
 
-        if (calculerOrEnMain() >= coutRestant && carte.getStock() > 0) {
-            // Utiliser les cartes Trésor pour payer
+        if (orDisponible >= coutRestant && carte.getStock() > 0) {
+            // Utiliser l'argent virtuel d'abord
+            if (argentVirtuel > 0) {
+                int utiliseVirtuel = std::min(coutRestant, argentVirtuel);
+                coutRestant -= utiliseVirtuel;
+                argentVirtuel -= utiliseVirtuel; // Réduire l'argent virtuel utilisé
+            }
+
+            // Utiliser les cartes Trésor pour payer le reste
             for (auto it = main.begin(); it != main.end() && coutRestant > 0; ) {
                 if ((*it)->getType() == "Tresor") {
                     if ((*it)->getNom() == "Cuivre") coutRestant -= 1;
@@ -252,17 +278,18 @@ void Joueur::acheterCarte(Cartes& carte) {
                 }
             }
 
+            // Vérifier si l'achat est validé
             if (coutRestant <= 0) {
                 // Ajouter la carte achetée à la défausse
                 defausse.push_back(std::make_shared<Cartes>(carte));
                 carte.setStock(carte.getStock() - 1); // Réduire le stock de la carte
                 nombreAchats--; // Réduire le nombre d'achats disponibles
-                std::cout << " Achat réussi. " << carte.getNom() << " a ete ajoute e la defausse.\n";
+                std::cout << "Achat réussi. " << carte.getNom() << " a été ajoutée à la défausse.\n";
             } else {
                 std::cout << "Erreur : Pas assez de Trésors pour acheter " << carte.getNom() << ".\n";
             }
         } else {
-            std::cout << "Erreur : Pas assez d'or ou stock epuise pour " << carte.getNom() << ".\n";
+            std::cout << "Erreur : Pas assez d'or ou stock épuisé pour " << carte.getNom() << ".\n";
         }
     } else {
         std::cout << "Erreur : Aucun achat disponible.\n";

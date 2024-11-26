@@ -8,7 +8,7 @@
 
 #include <iostream>   
 #include <set>
-#include <algorithm> // Nécessaire pour std::find_if
+#include <algorithm> //  pour std::find_if
 
 // Constructeur
 Royaume::Royaume(const std::string& nom) : Cartes(nom) {
@@ -111,28 +111,20 @@ void Royaume::Atelier(Joueur& joueur, Partie& partie) {
 void Royaume::Bucheron(Joueur& joueur) {
     std::cout << "Effet Bûcheron en cours...\n";
 
-    // Ajouter 2 cartes Cuivre directement dans la main
-    for (int i = 0; i < 2; ++i) {
-        auto carteCuivre = std::make_shared<Cartes>("Cuivre");
-        joueur.getMain().push_back(carteCuivre); // Ajoute les cuivres à la main
-    }
+    // Ajouter 2 pièces virtuelles
+    joueur.ajouterArgentVirtuel(2);
 
     // Augmenter le nombre d'achats
     joueur.setNombreAchats(joueur.getNombreAchats() + 1);
 
-
-
     // Afficher le résultat de l'effet
-    std::cout << joueur.getNom() << " gagne 2 pièces (Cuivres ajoutés à la main) et un achat supplémentaire.\n";
+    std::cout << joueur.getNom() << " gagne 2 pièces (virtuelles) et un achat supplémentaire.\n";
 
-    // Afficher la main du joueur après l'effet
-    std::cout << "Main actuelle de " << joueur.getNom() << " :\n";
-    for (const auto& carte : joueur.getMain()) {
-        std::cout << "- " << carte->getNom() << " (" << carte->getType() << ")\n";
-    }
+    // Débogage : Afficher l'état du joueur après l'effet
+    std::cout << "État après Bûcheron :\n";
+    std::cout << "- Argent virtuel : " << joueur.getArgentVirtuel() << "\n";
+    std::cout << "- Nombre d'achats disponibles : " << joueur.getNombreAchats() << "\n";
 }
-
-
 
 
 void Royaume::Chapelle(Joueur& joueur) {
